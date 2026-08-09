@@ -39,7 +39,3 @@ func (e *Engine) Execute(input string) (Result, error) {
 	}
 	return e.Apply(cmd)
 }
-
-
-
-
