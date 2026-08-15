@@ -31,6 +31,7 @@ func (e *Engine) Restore() error {
 		}
 		e.applyOp(op)
 	}
+	e.rebuildIndexes()
 	return nil
 }
 

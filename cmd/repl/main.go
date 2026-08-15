@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/axel-po/project-go-clone-redis/internal/command"
 	"github.com/axel-po/project-go-clone-redis/internal/config"
 	"github.com/axel-po/project-go-clone-redis/internal/engine"
 	"github.com/axel-po/project-go-clone-redis/internal/storage"
@@ -29,7 +30,7 @@ func main() {
 	defer db.Close()
 
 	scanner := bufio.NewScanner(os.Stdin)
-	fmt.Println("clone mini redis — SET k \"v\" / GET k / DELETE k / Ctrl+D pour quitter")
+	fmt.Println(`clone mini redis — SET k "v" / GET k / DELETE k / GET WHERE <op> v / Ctrl+D pour quitter`)
 
 	for {
 		fmt.Print("> ")
@@ -40,7 +41,25 @@ func main() {
 			return
 		}
 
-		result, err := db.Execute(scanner.Text())
+		cmd, err := command.Parse(scanner.Text())
+		if err != nil {
+			fmt.Println("ERR", err)
+			continue
+		}
+
+		if q, ok := cmd.(command.GetWhere); ok {
+			entries := db.Filter(q)
+			if len(entries) == 0 {
+				fmt.Println("(vide)")
+				continue
+			}
+			for _, entry := range entries {
+				fmt.Printf("%s = %q\n", entry.Key, entry.Value)
+			}
+			continue
+		}
+
+		result, err := db.Apply(cmd)
 		switch {
 		case errors.Is(err, engine.ErrKeyNotFound):
 			fmt.Println("(nil)")

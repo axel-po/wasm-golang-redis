@@ -6,7 +6,11 @@ func (e *Engine) Set(key, value string) {
 	e.mu.Lock()
 	defer e.mu.Unlock()
 
+	if old, ok := e.state[key]; ok {
+		e.indexRemove(key, old)
+	}
 	e.state[key] = value
+	e.indexAdd(key, value)
 	e.record(Operation{Kind: opSet, Key: key, Value: value})
 }
 
@@ -25,7 +29,10 @@ func (e *Engine) Delete(key string) bool {
 	e.mu.Lock()
 	defer e.mu.Unlock()
 
-	_, existed := e.state[key]
+	old, existed := e.state[key]
+	if existed {
+		e.indexRemove(key, old)
+	}
 	delete(e.state, key)
 	e.record(Operation{Kind: opDelete, Key: key})
 	return existed

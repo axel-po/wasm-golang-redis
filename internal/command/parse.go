@@ -24,6 +24,9 @@ func Parse(input string) (Command, error) {
 		return Set{Key: args[0], Value: args[1]}, nil
 
 	case "GET":
+		if len(args) >= 1 && strings.ToUpper(args[0]) == "WHERE" {
+			return parseGetWhere(args[1:])
+		}
 		if err := expectArgs(verb, args, 1); err != nil {
 			return nil, err
 		}
@@ -37,6 +40,36 @@ func Parse(input string) (Command, error) {
 
 	default:
 		return nil, fmt.Errorf("parse %q: %w", tokens[0], ErrUnknownCommand)
+	}
+}
+
+func parseGetWhere(args []string) (Command, error) {
+	if len(args) != 2 {
+		return nil, fmt.Errorf("GET WHERE attend <op> <valeur>: %w", ErrWrongArgCount)
+	}
+	op, err := parseOperator(args[0])
+	if err != nil {
+		return nil, err
+	}
+	return GetWhere{Op: op, Value: args[1]}, nil
+}
+
+func parseOperator(s string) (Operator, error) {
+	switch strings.ToLower(s) {
+	case "equals":
+		return OpEquals, nil
+	case "contains":
+		return OpContains, nil
+	case ">":
+		return OpGT, nil
+	case ">=":
+		return OpGTE, nil
+	case "<":
+		return OpLT, nil
+	case "<=":
+		return OpLTE, nil
+	default:
+		return "", fmt.Errorf("opérateur %q: %w", s, ErrUnknownOperator)
 	}
 }
 
