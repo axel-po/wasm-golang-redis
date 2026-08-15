@@ -18,7 +18,7 @@ func New() *Engine {
 	return &Engine{
 		state:       make(map[string]string),
 		equalsIndex: make(map[string]map[string]struct{}),
-		rangeIdx:    newSortedIndex(),
+		rangeIdx:    newBTree(btreeMinDegree),
 	}
 }
 

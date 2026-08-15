@@ -40,7 +40,7 @@ func (e *Engine) indexRemove(key, value string) {
 
 func (e *Engine) rebuildIndexes() {
 	e.equalsIndex = make(map[string]map[string]struct{})
-	e.rangeIdx = newSortedIndex()
+	e.rangeIdx = newBTree(btreeMinDegree)
 	for key, value := range e.state {
 		e.indexAdd(key, value)
 	}
