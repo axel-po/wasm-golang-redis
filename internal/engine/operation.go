@@ -10,9 +10,10 @@ const (
 )
 
 type Operation struct {
-	Kind  opKind `json:"kind"`
-	Key   string `json:"key"`
-	Value string `json:"value,omitempty"`
+	Kind      opKind `json:"kind"`
+	Key       string `json:"key"`
+	Value     string `json:"value,omitempty"`
+	ExpiresAt int64  `json:"expires_at,omitempty"`
 }
 
 func encodeOp(op Operation) ([]byte, error) {

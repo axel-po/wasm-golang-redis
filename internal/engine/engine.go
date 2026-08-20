@@ -1,24 +1,29 @@
 package engine
 
-import "sync"
+import (
+	"sync"
+	"time"
+)
 
 type Engine struct {
 	mu sync.Mutex
 
-	state       map[string]string
+	state       map[string]record
 	buffer      []Operation
 	equalsIndex map[string]map[string]struct{}
 	rangeIdx    rangeIndex
 
 	storage Storage
 	done    chan struct{}
+	clock   func() time.Time
 }
 
 func New() *Engine {
 	return &Engine{
-		state:       make(map[string]string),
+		state:       make(map[string]record),
 		equalsIndex: make(map[string]map[string]struct{}),
 		rangeIdx:    newBTree(btreeMinDegree),
+		clock:       time.Now,
 	}
 }
 

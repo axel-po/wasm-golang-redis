@@ -10,7 +10,11 @@ func (e *Engine) Snapshot() error {
 		return nil
 	}
 
-	data, err := json.Marshal(e.state)
+	dump := make(map[string]persistedRecord, len(e.state))
+	for key, rec := range e.state {
+		dump[key] = persistedRecord{Value: rec.value, ExpiresAt: unixNano(rec.expiresAt)}
+	}
+	data, err := json.Marshal(dump)
 	if err != nil {
 		return err
 	}

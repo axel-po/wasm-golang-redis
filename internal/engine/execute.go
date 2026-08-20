@@ -14,7 +14,11 @@ type Result struct {
 func (e *Engine) Apply(cmd command.Command) (Result, error) {
 	switch c := cmd.(type) {
 	case command.Set:
-		e.Set(c.Key, c.Value)
+		if c.TTL > 0 {
+			e.SetEX(c.Key, c.Value, c.TTL)
+		} else {
+			e.Set(c.Key, c.Value)
+		}
 		return Result{}, nil
 
 	case command.Get:

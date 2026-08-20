@@ -26,11 +26,11 @@ func main() {
 		fmt.Fprintln(os.Stderr, "erreur de restauration:", err)
 		os.Exit(1)
 	}
-	db.StartBackground(cfg.FlushInterval, cfg.SnapshotInterval)
+	db.StartBackground(cfg.FlushInterval, cfg.SnapshotInterval, cfg.SweepInterval)
 	defer db.Close()
 
 	scanner := bufio.NewScanner(os.Stdin)
-	fmt.Println(`clone mini redis — SET k "v" / GET k / DELETE k / GET WHERE <op> v / Ctrl+D pour quitter`)
+	fmt.Println(`clone mini redis — SET k "v" [EX s] / GET k / DELETE k / GET WHERE <op> v / Ctrl+D`)
 
 	for {
 		fmt.Print("> ")

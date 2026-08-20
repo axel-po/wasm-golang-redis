@@ -2,7 +2,9 @@ package command
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
+	"time"
 )
 
 func Parse(input string) (Command, error) {
@@ -18,10 +20,7 @@ func Parse(input string) (Command, error) {
 
 	switch verb {
 	case "SET":
-		if err := expectArgs(verb, args, 2); err != nil {
-			return nil, err
-		}
-		return Set{Key: args[0], Value: args[1]}, nil
+		return parseSet(args)
 
 	case "GET":
 		if len(args) >= 1 && strings.ToUpper(args[0]) == "WHERE" {
@@ -40,6 +39,23 @@ func Parse(input string) (Command, error) {
 
 	default:
 		return nil, fmt.Errorf("parse %q: %w", tokens[0], ErrUnknownCommand)
+	}
+}
+
+func parseSet(args []string) (Command, error) {
+	switch {
+	case len(args) == 2:
+		return Set{Key: args[0], Value: args[1]}, nil
+
+	case len(args) == 4 && strings.ToUpper(args[2]) == "EX":
+		secs, err := strconv.Atoi(args[3])
+		if err != nil || secs <= 0 {
+			return nil, fmt.Errorf("EX attend un entier positif, reçu %q: %w", args[3], ErrInvalidTTL)
+		}
+		return Set{Key: args[0], Value: args[1], TTL: time.Duration(secs) * time.Second}, nil
+
+	default:
+		return nil, fmt.Errorf(`SET attend <clé> <valeur> [EX <secondes>]: %w`, ErrWrongArgCount)
 	}
 }
 

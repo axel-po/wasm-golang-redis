@@ -1,6 +1,9 @@
 package command
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 type Command interface {
 	isCommand()
@@ -10,6 +13,7 @@ type Command interface {
 type Set struct {
 	Key   string
 	Value string
+	TTL   time.Duration
 }
 
 type Get struct {

@@ -9,6 +9,7 @@ type Config struct {
 	DataDir          string
 	FlushInterval    time.Duration
 	SnapshotInterval time.Duration
+	SweepInterval    time.Duration
 }
 
 func Load() Config {
@@ -16,6 +17,7 @@ func Load() Config {
 		DataDir:          getEnv("WASMREDIS_DATA_DIR", "data"),
 		FlushInterval:    getEnvDuration("WASMREDIS_FLUSH_INTERVAL", time.Second),
 		SnapshotInterval: getEnvDuration("WASMREDIS_SNAPSHOT_INTERVAL", 2*time.Minute),
+		SweepInterval:    getEnvDuration("WASMREDIS_SWEEP_INTERVAL", 10*time.Second),
 	}
 }
 

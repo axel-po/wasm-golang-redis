@@ -41,8 +41,8 @@ func (e *Engine) indexRemove(key, value string) {
 func (e *Engine) rebuildIndexes() {
 	e.equalsIndex = make(map[string]map[string]struct{})
 	e.rangeIdx = newBTree(btreeMinDegree)
-	for key, value := range e.state {
-		e.indexAdd(key, value)
+	for key, rec := range e.state {
+		e.indexAdd(key, rec.value)
 	}
 }
 

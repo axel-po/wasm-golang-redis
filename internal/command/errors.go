@@ -8,4 +8,5 @@ var (
 	ErrWrongArgCount   = errors.New("nombre d'arguments invalide")
 	ErrUnclosedQuote   = errors.New("guillemet non fermé")
 	ErrUnknownOperator = errors.New("opérateur inconnu")
+	ErrInvalidTTL      = errors.New("durée d'expiration invalide")
 )

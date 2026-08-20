@@ -27,18 +27,22 @@ func (e *Engine) Filter(q command.GetWhere) []Entry {
 }
 
 func (e *Engine) filterEquals(value string) []Entry {
-	entries := make([]Entry, 0, len(e.equalsIndex[value]))
+	now := e.clock()
+	var entries []Entry
 	for key := range e.equalsIndex[value] {
-		entries = append(entries, Entry{Key: key, Value: value})
+		if rec, ok := e.state[key]; ok && !rec.expired(now) {
+			entries = append(entries, Entry{Key: key, Value: value})
+		}
 	}
 	return entries
 }
 
 func (e *Engine) filterContains(sub string) []Entry {
+	now := e.clock()
 	var entries []Entry
-	for key, value := range e.state {
-		if strings.Contains(value, sub) {
-			entries = append(entries, Entry{Key: key, Value: value})
+	for key, rec := range e.state {
+		if !rec.expired(now) && strings.Contains(rec.value, sub) {
+			entries = append(entries, Entry{Key: key, Value: rec.value})
 		}
 	}
 	return entries
@@ -49,8 +53,14 @@ func (e *Engine) filterRange(op command.Operator, target string) []Entry {
 	if !ok {
 		return nil
 	}
+	now := e.clock()
 	keys := e.rangeIdx.query(op, n)
-	return lo.Map(keys, func(key string, _ int) Entry {
-		return Entry{Key: key, Value: e.state[key]}
+
+	return lo.FilterMap(keys, func(key string, _ int) (Entry, bool) {
+		rec, ok := e.state[key]
+		if !ok || rec.expired(now) {
+			return Entry{}, false
+		}
+		return Entry{Key: key, Value: rec.value}, true
 	})
 }

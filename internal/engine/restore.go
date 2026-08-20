@@ -15,8 +15,12 @@ func (e *Engine) Restore() error {
 		return err
 	}
 	if snap != nil {
-		if err := json.Unmarshal(snap, &e.state); err != nil {
+		var dump map[string]persistedRecord
+		if err := json.Unmarshal(snap, &dump); err != nil {
 			return err
+		}
+		for key, pr := range dump {
+			e.state[key] = record{value: pr.Value, expiresAt: fromUnixNano(pr.ExpiresAt)}
 		}
 	}
 
@@ -38,7 +42,7 @@ func (e *Engine) Restore() error {
 func (e *Engine) applyOp(op Operation) {
 	switch op.Kind {
 	case opSet:
-		e.state[op.Key] = op.Value
+		e.state[op.Key] = record{value: op.Value, expiresAt: fromUnixNano(op.ExpiresAt)}
 	case opDelete:
 		delete(e.state, op.Key)
 	}
