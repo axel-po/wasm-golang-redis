@@ -8,8 +8,34 @@ import (
 )
 
 type Entry struct {
-	Key   string
-	Value string
+	Key       string `json:"key"`
+	Value     string `json:"value"`
+	ExpiresAt int64  `json:"expiresAt,omitempty"`
+}
+
+func (e *Engine) All() []Entry {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
+	now := e.clock()
+	entries := make([]Entry, 0, len(e.state))
+	for key, rec := range e.state {
+		if !rec.expired(now) {
+			entries = append(entries, Entry{Key: key, Value: rec.value, ExpiresAt: rec.expiresAtMillis()})
+		}
+	}
+	return entries
+}
+
+func (e *Engine) Lookup(key string) (Entry, bool) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
+	rec, ok := e.state[key]
+	if !ok || rec.expired(e.clock()) {
+		return Entry{}, false
+	}
+	return Entry{Key: key, Value: rec.value, ExpiresAt: rec.expiresAtMillis()}, true
 }
 
 func (e *Engine) Filter(q command.GetWhere) []Entry {

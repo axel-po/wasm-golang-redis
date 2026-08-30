@@ -1,0 +1,29 @@
+# Données de persistance (générées à l'exécution)
+data/
+*.aof
+*.log
+
+# Fichiers d'environnement (garder .env.example)
+.env
+.env.local
+
+# Artefacts de build WASM (régénérés par scripts/build-wasm.sh)
+web/public/wasmredis.wasm
+web/src/worker/wasm_exec.js
+
+# Node / Vite (dossier web)
+web/node_modules/
+web/dist/
+web/*.tsbuildinfo
+
+# Go
+*.test
+*.out
+
+# OS / éditeurs
+.DS_Store
+*.swp
+.idea/
+.vscode/
+
+.claude

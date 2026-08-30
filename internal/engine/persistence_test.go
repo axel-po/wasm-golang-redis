@@ -19,7 +19,6 @@ func TestRestoreDepuisJournal(t *testing.T) {
 		t.Fatalf("Flush: %v", err)
 	}
 
-	// Nouveau moteur, même dossier.
 	db2 := NewWithStorage(newStore(t, dir))
 	if err := db2.Restore(); err != nil {
 		t.Fatalf("Restore: %v", err)

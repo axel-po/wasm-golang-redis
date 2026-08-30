@@ -19,11 +19,11 @@ func TestBTreeRangeSurGrosVolume(t *testing.T) {
 		val  string
 		want int
 	}{
-		{command.OpGTE, "990", 10}, // 990..999
-		{command.OpGT, "990", 9},   // 991..999
-		{command.OpLT, "5", 5},     // 0..4
-		{command.OpLTE, "5", 6},    // 0..5
-		{command.OpGTE, "0", n},    // tout
+		{command.OpGTE, "990", 10},
+		{command.OpGT, "990", 9},
+		{command.OpLT, "5", 5},
+		{command.OpLTE, "5", 6},
+		{command.OpGTE, "0", n},
 	}
 
 	for _, c := range cases {

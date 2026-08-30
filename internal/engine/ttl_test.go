@@ -23,7 +23,7 @@ func TestTTLExpirationLazy(t *testing.T) {
 		t.Fatalf("avant expiration: got %q, %v", v, err)
 	}
 
-	now = time.Unix(1061, 0) // dépassé
+	now = time.Unix(1061, 0)
 	if _, err := db.Get("k"); !errors.Is(err, ErrKeyNotFound) {
 		t.Fatalf("après expiration: erreur = %v, attendu %v", err, ErrKeyNotFound)
 	}

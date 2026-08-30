@@ -11,6 +11,13 @@ func (r record) expired(now time.Time) bool {
 	return !r.expiresAt.IsZero() && !now.Before(r.expiresAt)
 }
 
+func (r record) expiresAtMillis() int64 {
+	if r.expiresAt.IsZero() {
+		return 0
+	}
+	return r.expiresAt.UnixMilli()
+}
+
 type persistedRecord struct {
 	Value     string `json:"value"`
 	ExpiresAt int64  `json:"expires_at,omitempty"`
