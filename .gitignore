@@ -19,6 +19,10 @@ web/*.tsbuildinfo
 # Go
 *.test
 *.out
+# binaires compilés produits par `go build ./cmd/...` à la racine
+/wasm
+/bench
+/repl
 
 # OS / éditeurs
 .DS_Store

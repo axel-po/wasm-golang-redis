@@ -182,3 +182,14 @@ Le moteur quitte le terminal pour le navigateur.
 
 Chaque brique a ses tests (`*_test.go` côté Go, `*.test.ts` côté SDK). Voir
 [GETTING_STARTED.md](./GETTING_STARTED.md) pour les commandes.
+
+## Benchmark
+
+Rapport chiffré et reproductible : [BENCHMARK.md](./BENCHMARK.md) (latences
+SET/GET p50/p95, GET filtré equals/contains/range par taille de base, temps de
+restore, gain du batch, + procédure UI FPS/render granulaire).
+
+```bash
+go run ./cmd/bench                                  # tableaux de latences
+go test -bench=. -benchmem -run='^$' ./internal/engine/   # débit + allocations
+```
